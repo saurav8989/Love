@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Little Corner of the Internet Just for You ❤️</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Falling petals background layer -->
+  <div id="petals-container" class="petals-container"></div>
+
+  <!-- Entry Splash Overlay -->
+  <div id="splash-overlay" class="splash-overlay">
+    <button class="theme-toggle-btn splash-theme-btn" title="Toggle Light/Dark Mode">🌙</button>
+    <div class="bouquet-scene">
+      <div class="bouquet-flowers">
+        <div class="bouquet-row row-top">
+          <span class="flower f-cherry-tl">🌸</span>
+          <span class="flower f-baby-l">🌼</span>
+          <span class="flower f-sunflower">🌻</span>
+          <span class="flower f-baby-r">🌼</span>
+          <span class="flower f-cherry-tr">🌸</span>
+        </div>
+        <div class="bouquet-row row-mid">
+          <span class="flower f-cherry-ml">🌸</span>
+          <span class="flower f-rose-l">🌹</span>
+          <span class="flower f-tulip-c">🌷</span>
+          <span class="flower f-rose-r">🌹</span>
+          <span class="flower f-cherry-mr">🌸</span>
+        </div>
+        <div class="bouquet-row row-bot">
+          <span class="flower f-tulip-ll">🌷</span>
+          <span class="flower f-tulip-l">🌷</span>
+           <span class="flower f-rose-r">🌹</span>
+          <span class="flower f-tulip-r">🌷</span>
+          <span class="flower f-tulip-rr">🌷</span>
+        </div>
+        <div class="bouquet-row row-bot">
+          <span class="flower f-tulip-ll">🌷</span>
+          <span class="flower f-tulip-l">🌷</span>
+          <span class="flower f-tulip-r">🌷</span>
+        </div>
+         <div class="bouquet-row row-bot">
+          <span class="flower f-tulip-ll">🌷</span>
+        </div>
+        <div class="bouquet-row row-accent">
+          <span class="flower f-cherry-bl">🌸</span>
+          <span class="flower f-baby-b">🌼</span>
+          <span class="flower f-cherry-br">🌸</span>
+        </div>
+        <div class="bouquet-row row-ribbon">
+          <span class="flower f-ribbon">🎀</span>
+        </div>
+      </div>
+      <div class="bouquet-message">
+        <p>I couldn't send you real flowers today…</p>
+        <p>so I made you a garden instead.</p>
+      </div>
+      <p class="splash-hint">tap anywhere to begin</p>
+    </div>
+  </div>
+
+  <!-- Floating Control Panel (Top Right) -->
+  <div class="control-panel">
+    <button id="theme-toggle-btn" class="control-btn theme-toggle-btn" title="Toggle Light/Dark Mode">🌙</button>
+    <button id="audio-music-btn" class="control-btn" title="Toggle lo-fi music">🎹</button>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+
+    <!-- 1. HERO / WELCOME SECTION -->
+    <section id="home">
+      <div class="glass-panel">
+        <h1 id="greeting" class="hero-greeting"><span id="greeting-text">Hi there, Baby</span> <span id="secret-heart-trigger" class="pulse-heart" title="Something secret...">❤️</span></h1>
+        <div id="welcome-message" class="hero-body">
+          <!-- Populated from config.js -->
+        </div>
+        <button id="start-breathing-btn" class="hero-btn">
+          <span>✨</span> Take a breath with me
+        </button>
+      </div>
+    </section>
+
+    <!-- HIDDEN SECRET "OPEN WHEN" SECTION -->
+    <section id="secret-section" class="secret-section hidden-section">
+      <h2 id="secret-title">A Secret Corner</h2>
+      <p id="secret-subtitle" class="section-subtitle">Open these notes only when you truly need them...</p>
+      <div id="open-when-grid" class="cards-grid">
+        <!-- Populated dynamically from config.js -->
+      </div>
+    </section>
+
+    <!-- 2. THINGS I ADMIRE SECTION -->
+    <section id="admire">
+      <h2>Things I Admire About You</h2>
+      <p class="section-subtitle">Real observations from our conversations</p>
+      
+      <div id="admire-cards-grid" class="cards-grid">
+        <!-- Rendered dynamically from config.js -->
+      </div>
+    </section>
+
+    <!-- 3. WHEN THINGS FEEL HARD SECTION -->
+    <section id="support">
+      <h2>When Things Feel Hard</h2>
+      <p class="section-subtitle">A little support for whenever you need it</p>
+      
+      <div class="glass-panel hard-times-container">
+        <!-- Support Navigation Tabs -->
+        <div id="support-tabs" class="support-tabs">
+          <!-- Rendered dynamically from config.js -->
+        </div>
+        
+        <!-- Support Message Display Box -->
+        <div id="support-content-box" class="support-content-box">
+          <p id="support-message" class="support-message">
+            <!-- Populated dynamically -->
+          </p>
+        </div>
+
+        <!-- Plant a Secret Garden of Promises -->
+        <div class="secret-garden-container">
+          <h3 class="garden-title">Plant a Flower of Promise</h3>
+          <p class="garden-subtitle">Choose a seed, water it, and watch our garden grow. Each bloom reveals a special promise from me to you.</p>
+          <div class="garden-pots">
+            <div class="garden-pot" data-flower="rose">
+              <div class="flower-container">
+                <div class="flower-stage stage-seed">🌱</div>
+                <div class="flower-stem"></div>
+                <div class="flower-bloom flower-rose">🌹</div>
+              </div>
+              <div class="pot-body">🏺</div>
+              <button class="water-btn">Water Seed</button>
+              <span class="pot-label">Rose of Love</span>
+            </div>
+            <div class="garden-pot" data-flower="lavender">
+              <div class="flower-container">
+                <div class="flower-stage stage-seed">🌱</div>
+                <div class="flower-stem"></div>
+                <div class="flower-bloom flower-lavender">🪻</div>
+              </div>
+              <div class="pot-body">🏺</div>
+              <button class="water-btn">Water Seed</button>
+              <span class="pot-label">Lavender of Peace</span>
+            </div>
+            <div class="garden-pot" data-flower="sunflower">
+              <div class="flower-container">
+                <div class="flower-stage stage-seed">🌱</div>
+                <div class="flower-stem"></div>
+                <div class="flower-bloom flower-sunflower">🌻</div>
+              </div>
+              <div class="pot-body">🏺</div>
+              <button class="water-btn">Water Seed</button>
+              <span class="pot-label">Sunflower of Warmth</span>
+            </div>
+          </div>
+          <div id="garden-promise-box" class="garden-promise-box">
+            <!-- Dynamic promise message displays here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. LOVE NOTE JAR SECTION -->
+    <section id="love-jar">
+      <h2>The Love Note Jar</h2>
+      <p class="section-subtitle">Reach in and pull out a little heart note whenever you want to feel my warmth</p>
+      
+      <div class="glass-panel jar-wrapper">
+        <div class="jar-container">
+          <div id="love-jar-svg" class="love-jar-svg">
+            <svg viewBox="0 0 100 130" width="130" height="169">
+              <!-- Jar outline -->
+              <path d="M 30,12 Q 30,22 24,25 Q 18,28 18,35 L 18,105 Q 18,125 50,125 Q 82,125 82,105 L 82,35 Q 82,28 76,25 Q 70,22 70,12 Z" fill="rgba(255, 255, 255, 0.15)" stroke="var(--text-primary)" stroke-width="3" />
+              <!-- Jar lid -->
+              <rect x="26" y="2" width="48" height="10" rx="3" fill="var(--accent-pink)" stroke="var(--text-primary)" stroke-width="2.5" />
+              <!-- Jar neck line -->
+              <line x1="30" y1="12" x2="70" y2="12" stroke="var(--text-primary)" stroke-width="2.5" />
+              <!-- Floating hearts inside jar -->
+              <path d="M 38,55 A 4,4 0 0,1 44,55 A 4,4 0 0,1 50,55 Q 50,61 44,66 Q 38,61 38,55 Z" fill="var(--accent-pink)" class="jar-heart h1" />
+              <path d="M 52,85 A 3,3 0 0,1 56.5,85 A 3,3 0 0,1 61,85 Q 61,90 56.5,94 Q 52,90 52,85 Z" fill="var(--accent-lavender)" class="jar-heart h2" />
+              <path d="M 30,75 A 3.5,3.5 0 0,1 35.25,75 A 3.5,3.5 0 0,1 40.5,75 Q 40.5,81 35.25,85 Q 30,81 30,75 Z" fill="var(--accent-peach)" class="jar-heart h3" />
+              <path d="M 60,65 A 3.2,3.2 0 0,1 64.8,65 A 3.2,3.2 0 0,1 69.6,65 Q 69.6,71 64.8,75 Q 60,71 60,65 Z" fill="var(--accent-pink)" class="jar-heart h4" />
+              <path d="M 45,70 A 2.5,2.5 0 0,1 48.75,70 A 2.5,2.5 0 0,1 52.5,70 Q 52.5,74 48.75,78 Q 45,74 45,70 Z" fill="var(--accent-gold)" class="jar-heart h5" />
+            </svg>
+            <span class="tap-label">Tap to shake jar</span>
+          </div>
+        </div>
+        
+        <!-- Display container for the note -->
+        <div id="jar-note-display" class="jar-note-display">
+          <div id="jar-heart-container" class="jar-heart-container">
+            <div id="folded-heart" class="folded-heart">
+              <div class="heart-half left"></div>
+              <div class="heart-half right"></div>
+              <div class="heart-letter">Tap to open note</div>
+            </div>
+          </div>
+          <div id="jar-note-content" class="jar-note-content">
+            <!-- Unfolded message text will appear here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. OUR POLAROID SCRAPBOOK -->
+    <section id="thoughts">
+      <h2>Our Polaroid Scrapbook</h2>
+      <p class="section-subtitle">Moments, feelings, and memories that I hold close to my heart</p>
+      
+      <div class="polaroid-scrapbook">
+        <div id="polaroid-grid" class="polaroid-grid">
+          <!-- Populated dynamically from config.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. FINAL LETTER SECTION -->
+    <section id="letter">
+      <h2>A Note Just for You</h2>
+      <p class="section-subtitle">Click the envelope below to open the letter</p>
+      
+      <div class="letter-container">
+        <div id="envelope-wrapper" class="envelope-wrapper">
+          <div class="envelope-seal">
+            <span class="seal-icon">✉️</span>
+            <span class="seal-text">Open Note</span>
+          </div>
+          <div id="envelope-paper-card" class="envelope-paper-card">
+            <!-- Populated dynamically from config.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Breathing Guided Exercise Overlay Modal -->
+  <div id="breathing-overlay">
+    <div class="glass-panel breathing-card">
+      <h2>Take a Deep Breath</h2>
+      <p class="section-subtitle">Follow the expanding circle (4-7-8 rhythm)</p>
+      
+      <div class="breathing-circle-wrapper">
+        <div id="breathing-circle" class="breathing-circle"></div>
+        <div id="breathing-instruction" class="breathing-instruction">Breathe In...</div>
+      </div>
+      
+      <button id="close-breathing-btn" class="breathing-close-btn">Close Exercise</button>
+    </div>
+  </div>
+
+
+  <!-- Floating Center Bottom Navigation Dock -->
+  <div class="nav-dock-container">
+    <nav id="nav-dock" class="nav-dock">
+      <a href="#home" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="#admire" class="nav-item">
+        <span class="nav-icon">✨</span>
+        <span class="nav-text">Admire</span>
+      </a>
+      <a href="#support" class="nav-item">
+        <span class="nav-icon">💡</span>
+        <span class="nav-text">Support</span>
+      </a>
+      <a href="#love-jar" class="nav-item">
+        <span class="nav-icon">🏺</span>
+        <span class="nav-text">Jar</span>
+      </a>
+      <a href="#letter" class="nav-item">
+        <span class="nav-icon">💌</span>
+        <span class="nav-text">Letter</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Load Configuration & Interactive Logic -->
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
