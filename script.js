@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initThemeToggle();
   initSecretHeart();
   initPetals();
+  initBirthdayFeature();
 });
 
 /* FALLING PETALS */
@@ -616,6 +617,114 @@ function initAudioSynth() {
     });
   }
 
+  // --- BIRTHDAY TUNE SYNTHESIZER ---
+  function playMusicBoxNote(freq, startTime) {
+    if (!audioCtx) return;
+    
+    const osc = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    const gainNode2 = audioCtx.createGain();
+    
+    // Sine wave + bell overtone decay
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, startTime);
+    
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(freq * 2.002, startTime);
+    
+    gainNode.gain.setValueAtTime(0, startTime);
+    gainNode.gain.linearRampToValueAtTime(0.12, startTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.5);
+    
+    gainNode2.gain.setValueAtTime(0, startTime);
+    gainNode2.gain.linearRampToValueAtTime(0.04, startTime + 0.005);
+    gainNode2.gain.exponentialRampToValueAtTime(0.001, startTime + 0.6);
+    
+    osc.connect(gainNode);
+    osc2.connect(gainNode2);
+    
+    gainNode.connect(audioCtx.destination);
+    gainNode2.connect(audioCtx.destination);
+    
+    osc.start(startTime);
+    osc.stop(startTime + 1.6);
+    osc2.start(startTime);
+    osc2.stop(startTime + 0.7);
+  }
+
+  function playBirthdaySong(onFinished) {
+    ensureAudioContext(() => {
+      const now = audioCtx.currentTime;
+      
+      const melody = [
+        { note: 392.00, time: 0 },
+        { note: 392.00, time: 0.375 },
+        { note: 440.00, time: 0.5 },
+        { note: 392.00, time: 1.0 },
+        { note: 523.25, time: 1.5 },
+        { note: 493.88, time: 2.0 },
+        
+        { note: 392.00, time: 3.2 },
+        { note: 392.00, time: 3.575 },
+        { note: 440.00, time: 3.7 },
+        { note: 392.00, time: 4.2 },
+        { note: 587.33, time: 4.7 },
+        { note: 523.25, time: 5.2 },
+        
+        { note: 392.00, time: 6.4 },
+        { note: 392.00, time: 6.775 },
+        { note: 783.99, time: 6.9 },
+        { note: 659.25, time: 7.4 },
+        { note: 523.25, time: 7.9 },
+        { note: 493.88, time: 8.4 },
+        { note: 440.00, time: 8.9 },
+        
+        { note: 698.46, time: 10.1 },
+        { note: 698.46, time: 10.475 },
+        { note: 659.25, time: 10.6 },
+        { note: 523.25, time: 11.1 },
+        { note: 587.33, time: 11.6 },
+        { note: 523.25, time: 12.1 }
+      ];
+      
+      melody.forEach(item => {
+        playMusicBoxNote(item.note, now + item.time);
+      });
+      
+      if (onFinished) {
+        setTimeout(onFinished, 13800);
+      }
+    });
+  }
+
+  function pauseLofiForBirthday(callback) {
+    const wasPlaying = isMusicPlaying;
+    if (wasPlaying && musicBus) {
+      // Fade out lofi
+      musicBus.gain.setValueAtTime(musicBus.gain.value, audioCtx.currentTime);
+      musicBus.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8);
+      
+      // Stop scheduler loop
+      isMusicPlaying = false;
+      clearTimeout(musicLoopTimer);
+    }
+    
+    // Play music box Happy Birthday
+    playBirthdaySong(() => {
+      if (wasPlaying) {
+        // Fade in lofi
+        isMusicPlaying = true;
+        musicBus.gain.setValueAtTime(0, audioCtx.currentTime);
+        musicBus.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 1.2);
+        scheduleLoop(audioCtx.currentTime + 0.05);
+      }
+      if (callback) callback();
+    });
+  }
+
+  window.pauseLofiForBirthday = pauseLofiForBirthday;
+
   musicBtn.addEventListener("click", toggleMusic);
 }
 
@@ -693,4 +802,304 @@ function initSecretHeart() {
       }, 300);
     }
   });
+}
+
+/* ==========================================
+   BIRTHDAY FEATURE CONTROLLER
+   ========================================== */
+function initBirthdayFeature() {
+  const splashCountdownContainer = document.getElementById("splash-countdown-container");
+  const birthdaySection = document.getElementById("birthday-section");
+  const birthdayLetterContent = document.getElementById("birthday-letter-content");
+  
+  if (!CONFIG.birthdayDate) return;
+  
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  
+  // Timezone-safe local date parsing (supports YYYY-MM-DD and MM-DD)
+  const parts = CONFIG.birthdayDate.split("-").map(Number);
+  let birthMonth = 0; // 0-indexed (Jan = 0)
+  let birthDay = 1;
+  
+  if (parts.length === 3) {
+    // YYYY-MM-DD
+    birthMonth = parts[1] - 1;
+    birthDay = parts[2];
+  } else if (parts.length === 2) {
+    // MM-DD
+    birthMonth = parts[0] - 1;
+    birthDay = parts[1];
+  }
+  
+  // Check if today matches month and day (local timezone)
+  const isBirthdayToday = (today.getMonth() === birthMonth && today.getDate() === birthDay);
+  
+  // Determine target birthday year
+  let targetBirthday = new Date(currentYear, birthMonth, birthDay);
+  
+  // If birthday has already passed this year (and isn't today), roll target year forward
+  if (targetBirthday.getTime() < today.getTime() && !isBirthdayToday) {
+    targetBirthday = new Date(currentYear + 1, birthMonth, birthDay);
+  }
+
+  // Helper function to play note
+  function playBirthdayChime(freq, duration = 0.6, volume = 0.1) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  if (isBirthdayToday) {
+    // ------------------------------------
+    // BIRTHDAY MODE (TODAY)
+    // ------------------------------------
+    if (splashCountdownContainer) splashCountdownContainer.classList.add("hidden-element");
+    if (birthdaySection) birthdaySection.classList.remove("hidden-section");
+    
+    // Update Hero Greetings
+    const greetingEl = document.getElementById("greeting-text");
+    const messageEl = document.getElementById("welcome-message");
+    if (greetingEl && CONFIG.birthdayGreeting) {
+      greetingEl.innerHTML = CONFIG.birthdayGreeting;
+    }
+    if (messageEl && CONFIG.birthdayWelcome) {
+      messageEl.innerHTML = CONFIG.birthdayWelcome;
+    }
+    
+    // Update Entry Splash Overlay bouquet-message if it exists
+    const splashMessage = document.querySelector(".bouquet-message");
+    if (splashMessage) {
+      splashMessage.innerHTML = `
+        <p style="font-size: 1.4rem; color: var(--accent-pink); font-family: var(--font-serif); margin-bottom: 8px;">Happy Birthday, Baby! 🎂</p>
+        <p>I wish I could be there to celebrate with you today…</p>
+        <p>so I built this little sanctuary to keep you warm.</p>
+      `;
+    }
+
+    // Populate birthday letter
+    if (birthdayLetterContent && CONFIG.birthdayLetter) {
+      birthdayLetterContent.innerHTML = CONFIG.birthdayLetter;
+    }
+
+    // Background Confetti Rain
+    setInterval(() => {
+      spawnBirthdayConfetti(1, false);
+    }, 450);
+
+    // Candle blow-out logic
+    const candles = document.querySelectorAll(".candle");
+    let blownOutCount = 0;
+    
+    candles.forEach((candle, idx) => {
+      candle.addEventListener("click", () => {
+        if (candle.classList.contains("extinguished")) return;
+        
+        candle.classList.add("extinguished");
+        blownOutCount++;
+        
+        // Blow out smoke puff animation
+        const puff = document.createElement("span");
+        puff.className = "smoke-puff";
+        puff.textContent = "💨";
+        candle.appendChild(puff);
+        setTimeout(() => puff.remove(), 1500);
+        
+        // Play melodic chime note (ascending pentatonic scale)
+        const scale = [261.63, 293.66, 329.63, 392.00, 440.00];
+        playBirthdayChime(scale[idx % scale.length], 0.8, 0.08);
+
+        // If all candles blown out
+        if (blownOutCount === candles.length) {
+          setTimeout(() => {
+            // Play Synthesized Birthday Music Box (with fade transitions)
+            if (window.pauseLofiForBirthday) {
+              window.pauseLofiForBirthday();
+            } else {
+              // Fallback
+              const arpeggio = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+              arpeggio.forEach((freq, aIdx) => {
+                setTimeout(() => {
+                  playBirthdayChime(freq, 1.2, 0.08);
+                }, aIdx * 100);
+              });
+            }
+
+            // Burst confetti
+            const cakeWrapper = document.querySelector(".cake-wrapper");
+            let originX = window.innerWidth / 2;
+            let originY = window.innerHeight / 2;
+            if (cakeWrapper) {
+              const cakeRect = cakeWrapper.getBoundingClientRect();
+              originX = cakeRect.left + cakeRect.width / 2;
+              originY = cakeRect.top + cakeRect.height / 2;
+            }
+            
+            spawnBirthdayConfetti(80, true, originX, originY);
+
+            // Show letter & wish form
+            const wishCard = document.getElementById("birthday-wish-card");
+            if (wishCard) {
+              wishCard.classList.remove("hidden-element");
+              // Force layout reflow
+              void wishCard.offsetWidth;
+              wishCard.classList.add("visible");
+              wishCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+          }, 800);
+        }
+      });
+    });
+
+    // Wish form submission
+    const sendWishBtn = document.getElementById("send-wish-btn");
+    const wishInput = document.getElementById("wish-input");
+    const wishFeedback = document.getElementById("wish-feedback");
+    
+    if (sendWishBtn && wishInput) {
+      sendWishBtn.addEventListener("click", () => {
+        const wishText = wishInput.value.trim();
+        if (!wishText) return;
+        
+        wishInput.disabled = true;
+        sendWishBtn.disabled = true;
+        
+        // Spawn floating heart note animation
+        const heart = document.createElement("div");
+        heart.className = "floating-wish-heart";
+        heart.textContent = "💖";
+        
+        // Random sway variables
+        const swayX = (Math.random() - 0.5) * 200;
+        heart.style.setProperty('--sway-x', `${swayX}px`);
+        
+        // Position heart over button / input
+        const btnRect = sendWishBtn.getBoundingClientRect();
+        heart.style.left = `${btnRect.left + btnRect.width/2}px`;
+        heart.style.top = `${btnRect.top}px`;
+        
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+        
+        // Show feedback
+        if (wishFeedback) {
+          wishFeedback.classList.remove("hidden-element");
+        }
+        
+        wishInput.value = "";
+      });
+    }
+
+  } else {
+    // ------------------------------------
+    // COUNTDOWN MODE (FUTURE BIRTHDAY)
+    // ------------------------------------
+    if (birthdaySection) birthdaySection.classList.add("hidden-section");
+    if (splashCountdownContainer) splashCountdownContainer.classList.remove("hidden-element");
+    
+    function updateCountdown() {
+      const now = new Date();
+      const timeRemaining = targetBirthday.getTime() - now.getTime();
+      
+      if (timeRemaining <= 0) {
+        clearInterval(countdownInterval);
+        location.reload(); // Reload to activate Birthday Mode
+        return;
+      }
+      
+      const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+      // Update Landing Page Splash Countdown
+      const spDaysEl = document.getElementById("splash-cd-days");
+      const spHoursEl = document.getElementById("splash-cd-hours");
+      const spMinsEl = document.getElementById("splash-cd-mins");
+      const spSecsEl = document.getElementById("splash-cd-secs");
+      
+      if (spDaysEl) spDaysEl.textContent = String(days).padStart(2, '0');
+      if (spHoursEl) spHoursEl.textContent = String(hours).padStart(2, '0');
+      if (spMinsEl) spMinsEl.textContent = String(minutes).padStart(2, '0');
+      if (spSecsEl) spSecsEl.textContent = String(seconds).padStart(2, '0');
+    }
+    
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
+  }
+}
+
+// Confetti Spawning Helper
+function spawnBirthdayConfetti(count = 1, isBurst = false, originX = null, originY = null) {
+  const colors = ['#ff9a9e', '#fecfef', '#a1c4fd', '#c2e9fb', '#fecfef', '#f093fb', '#a8edd8', '#fed6e3', '#f6d365', '#fda085', '#fbbf24'];
+  const shapes = ['circle', 'square'];
+  
+  for (let i = 0; i < count; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    if (isBurst) confetti.classList.add('burst');
+    
+    const size = (6 + Math.random() * 8);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    
+    confetti.style.width = `${size}px`;
+    confetti.style.height = `${size}px`;
+    confetti.style.backgroundColor = color;
+    
+    if (shape === 'circle') {
+      confetti.style.borderRadius = '50%';
+    }
+    
+    if (isBurst) {
+      const angle = Math.random() * Math.PI * 2;
+      const velocity = 80 + Math.random() * 120;
+      const xStart = originX || (window.innerWidth / 2);
+      const yStart = originY || (window.innerHeight / 2);
+      
+      confetti.style.left = `${xStart}px`;
+      confetti.style.top = `${yStart}px`;
+      
+      const destX = Math.cos(angle) * velocity;
+      const destY = Math.sin(angle) * velocity + 150; // gravity effect
+      
+      confetti.style.setProperty('--dest-x', `${destX}px`);
+      confetti.style.setProperty('--dest-y', `${destY}px`);
+      
+      confetti.style.animation = `burstConfetti ${1.2 + Math.random() * 1.0}s cubic-bezier(0.1, 0.8, 0.25, 1) forwards`;
+      
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 2500);
+    } else {
+      const left = Math.random() * 100;
+      const duration = 5 + Math.random() * 5;
+      const delay = Math.random() * 2;
+      const rot = Math.random() * 360;
+      
+      confetti.style.left = `${left}%`;
+      confetti.style.top = `-15px`;
+      confetti.style.animation = `fallConfetti ${duration}s linear ${delay}s infinite`;
+      confetti.style.transform = `rotate(${rot}deg)`;
+      
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), duration * 1000 + delay * 1000);
+    }
+  }
 }

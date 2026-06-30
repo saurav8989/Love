@@ -59,6 +59,18 @@
         <p>I couldn't send you real flowers today…</p>
         <p>so I made you a garden instead.</p>
       </div>
+      
+      <!-- Splash Countdown (Hidden by default, shown via JS if birthday is in the future) -->
+      <div id="splash-countdown-container" class="countdown-container hidden-element">
+        <p class="countdown-title">🎈 Countdown to your special day 🎈</p>
+        <div class="countdown-timer">
+          <div class="countdown-item"><span id="splash-cd-days">00</span><label>Days</label></div>
+          <div class="countdown-item"><span id="splash-cd-hours">00</span><label>Hours</label></div>
+          <div class="countdown-item"><span id="splash-cd-mins">00</span><label>Mins</label></div>
+          <div class="countdown-item"><span id="splash-cd-secs">00</span><label>Secs</label></div>
+        </div>
+      </div>
+
       <p class="splash-hint">tap anywhere to begin</p>
     </div>
   </div>
@@ -82,6 +94,62 @@
         <button id="start-breathing-btn" class="hero-btn">
           <span>✨</span> Take a breath with me
         </button>
+      </div>
+    </section>
+
+    <!-- BIRTHDAY CELEBRATION SECTION (Hidden by default, shown via JS on her birthday) -->
+    <section id="birthday-section" class="birthday-section hidden-section">
+      <div class="glass-panel birthday-container">
+        <h2>Make a Wish, Baby! 🎂</h2>
+        <p class="section-subtitle">Click each candle to blow it out</p>
+        
+        <!-- Interactive Cake -->
+        <div class="cake-wrapper">
+          <div class="cake">
+            <div class="plate"></div>
+            <div class="layer layer-bottom"></div>
+            <div class="layer layer-middle"></div>
+            <div class="layer layer-top"></div>
+            <div class="icing"></div>
+            <div class="candles">
+              <div class="candle" id="candle-1" data-index="1">
+                <div class="flame"></div>
+              </div>
+              <div class="candle" id="candle-2" data-index="2">
+                <div class="flame"></div>
+              </div>
+              <div class="candle" id="candle-3" data-index="3">
+                <div class="flame"></div>
+              </div>
+              <div class="candle" id="candle-4" data-index="4">
+                <div class="flame"></div>
+              </div>
+              <div class="candle" id="candle-5" data-index="5">
+                <div class="flame"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Birthday Wish Card (revealed after candles are blown) -->
+        <div id="birthday-wish-card" class="birthday-wish-card hidden-element">
+          <div class="birthday-letter-box">
+            <h3 id="birthday-letter-title">A Special Letter for You</h3>
+            <div id="birthday-letter-content" class="birthday-letter-content">
+              <!-- Populated dynamically from config.js -->
+            </div>
+          </div>
+          
+          <div class="wish-form-container">
+            <h3>Make a Wish 💫</h3>
+            <p class="wish-instruction">Type your secret wish below and send it into the universe:</p>
+            <div class="wish-input-wrapper">
+              <input type="text" id="wish-input" placeholder="My wish is..." maxlength="200" autocomplete="off" />
+              <button id="send-wish-btn" class="wish-submit-btn">Send Wish</button>
+            </div>
+            <div id="wish-feedback" class="wish-feedback hidden-element">Your wish has been sent to the stars! 🌟✨</div>
+          </div>
+        </div>
       </div>
     </section>
 

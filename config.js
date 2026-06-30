@@ -162,5 +162,11 @@ const CONFIG = {
         content: "Distance is just numbers, Baby. My heart is completely yours, and every beat of it is a reminder of how much I miss you, adore you, and dream of the day I get to hold you in my arms. If you are missing me right now, wrap this message around you like a hug, close your eyes, and know that I am loving you from across the miles."
       }
     ]
-  }
+  },
+
+  // Birthday settings
+  birthdayDate: "2001-08-25", // Format: YYYY-MM-DD
+  birthdayGreeting: "Happy Birthday, Baby! 🎂",
+  birthdayWelcome: "Today is all about celebrating you—your light, your beautiful heart, and another wonderful year of you. No responsibilities, no schedules. Just enjoy this day to the fullest. ✨",
+  birthdayLetter: "My Dearest Baby,<br><br>Happy, Happy Birthday! 🎂✨<br><br>Today, I want to celebrate the day you came into this world and made it so much brighter. You carry so much, and you handle every challenge with such inspiring courage and grace. But today, you don't have to worry about a thing.<br><br>I hope this little digital garden, and the cake we just blew out, brings a big smile to your face. You deserve all the sweetness, the joy, and the love that this world has to offer.<br><br>Thank you for being such an incredible part of my life. I am so lucky to know you, to adore you, to love you, and to celebrate another year of your beautiful soul. I love you so much.<br><br>Make a beautiful wish, my love. I hope all your dreams find their way to you, and I promise to be by your side supporting you through each one of them.<br><br>Happy Birthday, my favorite person. I love you! ❤️<br><br>With all my love and warmth,<br>Me ❤️"
 };
